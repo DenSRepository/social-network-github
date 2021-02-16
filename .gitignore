@@ -87,3 +87,10 @@ local_settings.py
 
 .env
 db.sqlite3
+
+media/
+
+# не отслеживаем миграции
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
