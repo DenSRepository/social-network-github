@@ -25,7 +25,7 @@ SECRET_KEY = '@3539=8_d%-!db2s&0c8-()(+k6-=9@62p2)wp-a!&1=cq#lrm'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['mysite.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['mysite.com', 'localhost', '127.0.0.1', '54f677aa9b5a.ngrok.io']
 
 
 # Application definition
@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'social_django'
+    'social_django',
+    'images.apps.ImagesConfig',
     #'account.apps.AccountConfig',
 ]
 
