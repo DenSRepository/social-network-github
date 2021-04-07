@@ -1,8 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 from django.contrib import messages
 from .forms import ImageCreateForm
 from .models import Image
+from common.decorators import ajax_required
+from django.http import HttpResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @login_required
 def image_create(request):
@@ -32,5 +37,44 @@ def image_detail(request, id, slug):
     return render(request,
                   'images/image/detail.html',
                   {'section': 'images','image': image})
-# http://127.0.0.1:8000/images/create/?title=%20Django%20and%20Duke&url=http://upload.
-# wikimedia.org/wikipedia/commons/8/85/Django_Reinhardt_and_Duke_Ellington_%28Gottlieb%29.jpg
+
+@ajax_required
+@login_required
+@require_POST
+def image_like(request):
+    image_id = request.POST.get('id')
+    action = request.POST.get('action')
+    if image_id and action:
+        try:
+            image = Image.objects.get(id=image_id)
+            if action == 'like':
+                image.users_like.add(request.user)
+            else:
+                image.users_like.remove(request.user)
+            return JsonResponse({'status':'ok'})
+        except:
+            pass
+    return JsonResponse({'status':'ok'})
+
+@login_required
+def image_list(request):
+    images = Image.objects.all()
+    paginator = Paginator(images, 8)
+    page = request.GET.get('page')
+    try:
+        images = paginator.page(page)
+    except PageNotAnInteger:
+        # Если переданная страница не является числом, возвращаем первую.
+        images = paginator.page(1)
+    except EmptyPage:
+        if request.is_ajax():
+            # Если получили AJAX-запрос с номером страницы, большим, чем их количество,
+            # возвращаем пустую страницу.
+            return HttpResponse('')
+        # Если номер страницы больше, чем их количество, возвращаем последнюю.
+        images = paginator.page(paginator.num_pages)
+    if request.is_ajax():
+        return render(request,'images/image/list_ajax.html',
+                      {'section': 'images', 'images': images})
+    return render(request,'images/image/list.html',
+                      {'section': 'images', 'images': images})
