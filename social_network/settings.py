@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'images.apps.ImagesConfig',
     'sorl.thumbnail',
     #'account.apps.AccountConfig',
+    'actions.apps.ActionsConfig',
 ]
 
 MIDDLEWARE = [
